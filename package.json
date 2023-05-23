@@ -1,0 +1,13 @@
+{
+  "name": "wax-match-api",
+  "workspaces": [
+    "lambdas/discogs-access-token",
+    "lambdas/discogs-request-token"
+  ],
+  "scripts": {
+    "zipper": "npm run zipper --workspaces",
+    "bundle-deps": "npm run bundle-deps --workspaces",
+    "compile": "npm run compile --workspaces",
+    "build": "npm run build --workspaces"
+  }
+}

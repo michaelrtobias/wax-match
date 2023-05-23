@@ -1,0 +1,45 @@
+{
+  "name": "discogs-request-token",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "zipper": "cd ./dist && zip -r9 discogs-request-token.zip . && mv discogs-request-token.zip ../../../terraform/build-artifacts/discogs-request-token.zip",
+    "bundle-deps": "cp package*.json ./dist && cd ./dist && npm install --omit-dev",
+    "compile": "npx tsc",
+    "build": "tsup && npm run bundle-deps && npm run zipper"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.114",
+    "@types/node": "^18.16.3",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "aws-sdk": "^2.1369.0",
+    "axios": "^1.4.0",
+    "tsup": "^6.7.0"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "splitting": false,
+    "sourcemap": "inline",
+    "clean": true,
+    "bundle": true,
+    "dts": true,
+    "format": "cjs",
+    "minify": true,
+    "minifyIdentifiers": true,
+    "minifySyntax": true,
+    "minifyWhitespace": true,
+    "outDir": "./dist",
+    "platform": "node",
+    "target": "node18",
+    "tsconfig": "./tsconfig.json"
+  }
+}
