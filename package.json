@@ -9,5 +9,8 @@
     "bundle-deps": "npm run bundle-deps --workspaces",
     "compile": "npm run compile --workspaces",
     "build": "npm run build --workspaces"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5"
   }
 }
