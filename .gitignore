@@ -129,6 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-
+*/.DS_Store/*
 terraform/build-artifacts
 terraform/.terraform/*

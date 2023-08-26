@@ -25,8 +25,13 @@ resource "aws_lambda_function" "discogs_lambdas" {
   handler          = "index.handler"
   filename         = "./build-artifacts/${each.key}.zip"
   source_code_hash = filebase64sha256("./build-artifacts/${each.key}.zip")
-
-  runtime = "nodejs18.x"
+  runtime          = "nodejs18.x"
+  environment {
+    variables = {
+      consumer_key    = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_key.secret_string)["consumer_key"]
+      consumer_secret = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_secret.secret_string)["consumer_secret"]
+    }
+  }
 }
 
 resource "aws_cloudwatch_log_group" "discogs_lambdas" {

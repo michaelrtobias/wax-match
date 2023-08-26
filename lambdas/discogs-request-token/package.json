@@ -21,7 +21,8 @@
     "@faker-js/faker": "^7.6.0",
     "aws-sdk": "^2.1369.0",
     "axios": "^1.4.0",
-    "tsup": "^6.7.0"
+    "tsup": "^6.7.0",
+    "wax-match-axios-client": "^1.4.0"
   },
   "tsup": {
     "entry": [
