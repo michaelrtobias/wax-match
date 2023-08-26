@@ -1,11 +1,7 @@
-import axios, {
-  AxiosError,
-  AxiosHeaders,
-  AxiosResponse,
-  AxiosRequestConfig,
-} from "axios";
+import axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
+import { APIGatewayProxyResult } from "aws-lambda";
 
-exports.handler = async (): Promise<AxiosResponse> => {
+exports.handler = async (): Promise<APIGatewayProxyResult> => {
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -17,21 +13,30 @@ exports.handler = async (): Promise<AxiosResponse> => {
       "User-Agent": "agent",
     },
   };
-  console.log("config: ", config);
+
   try {
-    const { data, status } = await axios.get<AxiosResponse>(
+    const { data } = await axios.get<AxiosResponse>(
       "https://api.discogs.com/oauth/request_token",
       config
     );
 
-    return data;
+    let response = {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "OPTIONS,GET",
+      },
+      body: JSON.stringify(data),
+    };
+    return response;
   } catch (error) {
     const err = error as AxiosError;
     console.error(err.message as string);
-    console.log(err);
-    console.log(err);
-    console.log(err.config?.headers);
-    console.log(err.config?.headers.Authorization);
-    throw new Error("There was an error retrieving request token");
+    return {
+      statusCode: 500,
+      body: JSON.stringify(err.message),
+    };
   }
 };
