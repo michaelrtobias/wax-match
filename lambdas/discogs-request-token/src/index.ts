@@ -7,7 +7,7 @@ exports.handler = async (): Promise<APIGatewayProxyResult> => {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: `OAuth oauth_consumer_key="${
         process.env.consumer_key
-      }",oauth_signature_method="PLAINTEXT",oauth_timestamp="${Date.now()}",oauth_nonce="groovybaby",oauth_callback="http%3A%2F%2Flocalhost%3A5173%2Fdashboard",oauth_signature="${
+      }",oauth_signature_method="PLAINTEXT",oauth_timestamp="${Date.now()}",oauth_nonce="groovybaby",oauth_callback="http%3A%2F%2Flocalhost%3A5173%2Fdiscogs%2Fauth-token",oauth_signature="${
         process.env.consumer_secret
       }%26"`,
       "User-Agent": "agent",
