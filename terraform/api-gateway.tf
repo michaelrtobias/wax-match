@@ -48,6 +48,18 @@ resource "aws_api_gateway_rest_api_policy" "waxmatch" {
 EOF
 }
 
+data "aws_cognito_user_pools" "waxmatch" {
+  name = var.waxmatch_cognito_pool_name
+}
+
+resource "aws_api_gateway_authorizer" "waxmatch" {
+  name          = "CognitoUserPoolAuthorizer"
+  type          = "COGNITO_USER_POOLS"
+  rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
+  provider_arns = data.aws_cognito_user_pools.waxmatch.arns
+}
+
+
 
 resource "aws_api_gateway_resource" "discogs" {
   rest_api_id = aws_api_gateway_rest_api.waxmatch.id
@@ -70,9 +82,8 @@ resource "aws_api_gateway_method" "discogs_auth_request_token" {
   rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
   resource_id   = aws_api_gateway_resource.discogs_auth_request_token.id
   http_method   = "GET"
-  authorization = "NONE"
-  # authorization = "COGNITO_USER_POOLS"
-  # authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.waxmatch.id
 }
 
 resource "aws_api_gateway_method_response" "discogs_auth_request_token_200" {
@@ -131,9 +142,8 @@ resource "aws_api_gateway_method" "discogs_auth_access_token" {
   rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
   resource_id   = aws_api_gateway_resource.discogs_auth_access_token.id
   http_method   = "POST"
-  authorization = "NONE"
-  # authorization = "COGNITO_USER_POOLS"
-  # authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.waxmatch.id
 }
 
 resource "aws_api_gateway_method_response" "discogs_auth_access_token_200" {
@@ -241,9 +251,8 @@ resource "aws_api_gateway_method" "discogs_identity" {
   rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
   resource_id   = aws_api_gateway_resource.discogs_identity.id
   http_method   = "GET"
-  authorization = "NONE"
-  # authorization = "COGNITO_USER_POOLS"
-  # authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.waxmatch.id
 }
 
 resource "aws_api_gateway_method_response" "discogs_identity_200" {

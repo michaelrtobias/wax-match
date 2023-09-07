@@ -7,3 +7,8 @@ variable "discogs_lambdas" {
   }
 }
 
+
+variable "waxmatch_cognito_pool_name" {
+  type    = string
+  default = "waxmatcher-login"
+}
