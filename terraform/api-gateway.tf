@@ -120,6 +120,7 @@ resource "aws_lambda_permission" "discogs_auth_request_token_lambda" {
 }
 
 // access token
+
 resource "aws_api_gateway_resource" "discogs_auth_access_token" {
   rest_api_id = aws_api_gateway_rest_api.waxmatch.id
   parent_id   = aws_api_gateway_resource.discogs_auth.id
@@ -175,6 +176,116 @@ resource "aws_lambda_permission" "discogs_auth_access_token_lambda" {
   statement_id  = "AllowTMGReaddiscogs_authAPIInvoke"
   action        = "lambda:InvokeFunction"
   function_name = local.discogs_lambdas["discogs-access-token"].function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.waxmatch.execution_arn}/*/*/*"
+}
+
+// discogs identity
+
+resource "aws_api_gateway_resource" "discogs_identity" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  parent_id   = aws_api_gateway_resource.discogs.id
+  path_part   = "identity"
+}
+
+// discogs identity options
+
+# resource "aws_api_gateway_method" "discogs_identity_options_method" {
+#   rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
+#   resource_id   = aws_api_gateway_resource.discogs_identity.id
+#   http_method   = "OPTIONS"
+#   authorization = "NONE"
+# }
+
+# resource "aws_api_gateway_method_response" "discogs_identity_options_200" {
+#   rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+#   resource_id = aws_api_gateway_resource.discogs_identity.id
+#   http_method = aws_api_gateway_method.discogs_identity_options_method.http_method
+#   status_code = "200"
+#   response_models = {
+#     "application/json" = "Empty"
+#   }
+#   response_parameters = {
+#     "method.response.header.Access-Control-Allow-Headers" = true,
+#     "method.response.header.Access-Control-Allow-Methods" = true,
+#     "method.response.header.Access-Control-Allow-Origin"  = true
+#   }
+#   # depends_on = ["aws_api_gateway_method.options_method"]
+# }
+# resource "aws_api_gateway_integration" "discogs_identity_options_integration" {
+#   rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+#   resource_id = aws_api_gateway_resource.discogs_identity.id
+#   http_method = aws_api_gateway_method.discogs_identity_options_method.http_method
+#   type        = "MOCK"
+#   # passthrough_behavior = "NEVER"
+#   request_templates = {
+#     "application/json" : "{\"statusCode\": 200}"
+#   }
+#   # depends_on  = ["aws_api_gateway_method.options_method"]
+# }
+# resource "aws_api_gateway_integration_response" "discogs_identity_options_integration_response" {
+#   rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+#   resource_id = aws_api_gateway_resource.discogs_identity.id
+#   http_method = aws_api_gateway_method.discogs_identity_options_method.http_method
+#   status_code = aws_api_gateway_method_response.discogs_identity_options_200.status_code
+#   response_parameters = {
+#     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+#     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
+#     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+#   }
+#   # depends_on = ["aws_api_gateway_method_response.options_200"]
+# }
+
+// discogs identity get
+resource "aws_api_gateway_method" "discogs_identity" {
+  rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
+  resource_id   = aws_api_gateway_resource.discogs_identity.id
+  http_method   = "GET"
+  authorization = "NONE"
+  # authorization = "COGNITO_USER_POOLS"
+  # authorizer_id = aws_api_gateway_authorizer.cognito_authorizer.id
+}
+
+resource "aws_api_gateway_method_response" "discogs_identity_200" {
+  rest_api_id         = aws_api_gateway_rest_api.waxmatch.id
+  resource_id         = aws_api_gateway_resource.discogs_identity.id
+  http_method         = aws_api_gateway_method.discogs_identity.http_method
+  response_parameters = { "method.response.header.Access-Control-Allow-Origin" = true }
+  response_models = {
+    "application/json" = "Empty"
+  }
+  status_code = "200"
+}
+resource "aws_api_gateway_method_response" "discogs_identity_400" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  resource_id = aws_api_gateway_resource.discogs_identity.id
+  http_method = aws_api_gateway_method.discogs_identity.http_method
+  status_code = "400"
+}
+
+resource "aws_api_gateway_integration" "discogs_identity" {
+  rest_api_id             = aws_api_gateway_rest_api.waxmatch.id
+  resource_id             = aws_api_gateway_resource.discogs_identity.id
+  http_method             = aws_api_gateway_method.discogs_identity.http_method
+  integration_http_method = "GET"
+  type                    = "AWS_PROXY"
+  uri                     = local.discogs_lambdas["discogs-identity"].invoke_arn
+}
+
+resource "aws_api_gateway_integration_response" "discogs_identity" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  resource_id = aws_api_gateway_resource.discogs_identity.id
+  http_method = aws_api_gateway_method.discogs_identity.http_method
+  status_code = "200"
+
+  response_templates = {
+    "application/json" = ""
+  }
+}
+resource "aws_lambda_permission" "discogs_identity_lambda" {
+  statement_id  = "AllowTMGReaddiscogs_identityAPIInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = local.discogs_lambdas["discogs-identity"].function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.waxmatch.execution_arn}/*/*/*"
 }

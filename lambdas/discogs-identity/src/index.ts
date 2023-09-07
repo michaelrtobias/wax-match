@@ -1,25 +1,32 @@
 import axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
 import { APIGatewayProxyResult, APIGatewayProxyEvent } from "aws-lambda";
 
+type AuthInputs = {
+  oauth_token: string;
+  oauth_token_secret: string;
+};
 exports.handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   console.log("event", event);
+  const { queryStringParameters } = event;
+
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: `OAuth oauth_consumer_key="${
         process.env.consumer_key
-      }",oauth_signature_method="PLAINTEXT",oauth_timestamp="${Date.now()}",oauth_nonce="groovybaby",oauth_callback="http%3A%2F%2Flocalhost%3A5173%2Fdiscogs%2Fauth-token",oauth_signature="${
+      }",oauth_token="${
+        queryStringParameters?.oauth_token
+      }",oauth_signature_method="PLAINTEXT",oauth_timestamp="${Date.now()}",oauth_nonce="groovybaby",oauth_signature="${
         process.env.consumer_secret
-      }%26"`,
+      }%26${queryStringParameters?.oauth_token_secret}"`,
       "User-Agent": "agent",
     },
   };
-
   try {
     const { data } = await axios.get<AxiosResponse>(
-      "https://api.discogs.com/oauth/request_token",
+      "https://api.discogs.com/oauth/identity",
       config
     );
 

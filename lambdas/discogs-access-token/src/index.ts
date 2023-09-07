@@ -9,6 +9,7 @@ type AccessTokenInputs = {
 exports.handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+  console.log("event", event);
   let { body } = event;
   const parsedBody: AccessTokenInputs =
     typeof body === "string" ? JSON.parse(body) : body;
