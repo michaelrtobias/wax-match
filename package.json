@@ -2,7 +2,8 @@
   "name": "wax-match-api",
   "workspaces": [
     "lambdas/discogs-access-token",
-    "lambdas/discogs-request-token"
+    "lambdas/discogs-request-token",
+    "lambdas/discogs-identity"
   ],
   "scripts": {
     "zipper": "npm run zipper --workspaces",

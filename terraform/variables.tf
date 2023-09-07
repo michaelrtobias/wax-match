@@ -3,6 +3,7 @@ variable "discogs_lambdas" {
   default = {
     discogs-request-token = "discogs-request-token"
     discogs-access-token  = "discogs-access-token"
+    discogs-identity      = "discogs-identity"
   }
 }
 
