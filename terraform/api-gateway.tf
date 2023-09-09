@@ -298,3 +298,73 @@ resource "aws_lambda_permission" "discogs_identity_lambda" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.waxmatch.execution_arn}/*/*/*"
 }
+
+// discogs collections
+
+resource "aws_api_gateway_resource" "discogs_collections" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  parent_id   = aws_api_gateway_resource.discogs.id
+  path_part   = "collections"
+}
+
+// discogs releases
+
+resource "aws_api_gateway_resource" "discogs_collection_releases" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  parent_id   = aws_api_gateway_resource.discogs_collections.id
+  path_part   = "releases"
+}
+
+// discogs get collection releases
+resource "aws_api_gateway_method" "discogs_collection_releases" {
+  rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
+  resource_id   = aws_api_gateway_resource.discogs_collection_releases.id
+  http_method   = "GET"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.waxmatch.id
+}
+
+resource "aws_api_gateway_method_response" "discogs_collection_releases_200" {
+  rest_api_id         = aws_api_gateway_rest_api.waxmatch.id
+  resource_id         = aws_api_gateway_resource.discogs_collection_releases.id
+  http_method         = aws_api_gateway_method.discogs_collection_releases.http_method
+  response_parameters = { "method.response.header.Access-Control-Allow-Origin" = true }
+  response_models = {
+    "application/json" = "Empty"
+  }
+  status_code = "200"
+}
+
+resource "aws_api_gateway_method_response" "discogs_collection_releases_400" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  resource_id = aws_api_gateway_resource.discogs_collection_releases.id
+  http_method = aws_api_gateway_method.discogs_collection_releases.http_method
+  status_code = "400"
+}
+
+resource "aws_api_gateway_integration" "discogs_collection_releases" {
+  rest_api_id             = aws_api_gateway_rest_api.waxmatch.id
+  resource_id             = aws_api_gateway_resource.discogs_collection_releases.id
+  http_method             = aws_api_gateway_method.discogs_collection_releases.http_method
+  integration_http_method = "GET"
+  type                    = "AWS_PROXY"
+  uri                     = local.discogs_lambdas["discogs-get-collection-releases"].invoke_arn
+}
+
+resource "aws_api_gateway_integration_response" "discogs_collection_releases" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  resource_id = aws_api_gateway_resource.discogs_collection_releases.id
+  http_method = aws_api_gateway_method.discogs_collection_releases.http_method
+  status_code = "200"
+
+  response_templates = {
+    "application/json" = ""
+  }
+}
+resource "aws_lambda_permission" "discogs_collection_releases_lambda" {
+  statement_id  = "AllowTMGReaddiscogs_collection_releasesAPIInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = local.discogs_lambdas["discogs-get-collection-releases"].function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.waxmatch.execution_arn}/*/*/*"
+}
