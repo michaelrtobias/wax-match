@@ -1,3 +1,7 @@
+locals {
+  discogs_lambda_roles = aws_iam_role.discogs_lambdas
+}
+
 data "aws_iam_policy_document" "assume_role" {
   statement {
     effect = "Allow"
@@ -28,8 +32,11 @@ resource "aws_lambda_function" "discogs_lambdas" {
   runtime          = "nodejs18.x"
   environment {
     variables = {
-      consumer_key    = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_key.secret_string)["consumer_key"]
-      consumer_secret = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_secret.secret_string)["consumer_secret"]
+      song_processor_queue_url = aws_sqs_queue.song_processor.url
+      consumer_key             = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_key.secret_string)["consumer_key"]
+      consumer_secret          = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_secret.secret_string)["consumer_secret"]
+      spotify_client_is        = jsondecode(data.aws_secretsmanager_secret_version.spotify_token.secret_string)["spotify_client_id"]
+      spotify_client_secret    = jsondecode(data.aws_secretsmanager_secret_version.spotify_token.secret_string)["spotify_client_secret"]
     }
   }
 }
@@ -54,15 +61,49 @@ data "aws_iam_policy_document" "common_discogs_lambda_policy" {
   }
 }
 
-resource "aws_iam_policy" "common_lambda_policy" {
-  name        = "discogs-common-lambda-policy"
-  path        = "/"
-  description = "IAM policy for logging from a lambda"
-  policy      = data.aws_iam_policy_document.common_discogs_lambda_policy.json
+data "aws_iam_policy_document" "recieve_sqs_messages_lambda_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:ReceiveMessage",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes"
+    ]
+    resources = [aws_sqs_queue.song_processor.arn]
+  }
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  for_each   = var.discogs_lambdas
-  role       = aws_iam_role.discogs_lambdas[each.key].name
-  policy_arn = aws_iam_policy.common_lambda_policy.arn
+resource "aws_iam_policy" "recieve_sqs_messages_lambda_policy" {
+  name        = "recieve-sqs-messages-lambda-policy"
+  path        = "/"
+  description = "IAM policy for recieving messsages from a queue"
+  policy      = data.aws_iam_policy_document.recieve_sqs_messages_lambda_policy.json
 }
+
+resource "aws_iam_role_policy_attachment" "recieve_sqs_messages_lambda_policy" {
+  role       = local.discogs_lambda_roles["song-processor"].name
+  policy_arn = aws_iam_policy.recieve_sqs_messages_lambda_policy.arn
+}
+
+data "aws_iam_policy_document" "send_sqs_messages_lambda_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [aws_sqs_queue.song_processor.arn]
+  }
+}
+
+resource "aws_iam_policy" "send_sqs_messages_lambda_policy" {
+  name        = "send-sqs-messages-lambda-policy"
+  path        = "/"
+  description = "IAM policy for sending messages to a queue"
+  policy      = data.aws_iam_policy_document.send_sqs_messages_lambda_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "send_sqs_messages_lambda_policy" {
+  role       = local.discogs_lambda_roles["discogs-get-all-collection-releases"].name
+  policy_arn = aws_iam_policy.send_sqs_messages_lambda_policy.arn
+}
+

@@ -3,7 +3,10 @@
   "workspaces": [
     "lambdas/discogs-access-token",
     "lambdas/discogs-request-token",
-    "lambdas/discogs-identity"
+    "lambdas/discogs-identity",
+    "lambdas/discogs-get-collection-releases",
+    "lambdas/discogs-get-all-collection-releases",
+    "lambdas/song-processor"
   ],
   "scripts": {
     "zipper": "npm run zipper --workspaces",
@@ -12,12 +15,13 @@
     "build": "npm run build --workspaces"
   },
   "devDependencies": {
-    "@types/node": "^20.2.5"
+    "@types/node": "^20.6.0"
   },
   "dependencies": {
-    "axios": "^1.4.0",
+    "axios": "^1.5.0",
+    "eslint": "^8.49.0",
     "i": "^0.3.7",
-    "npm": "^9.6.7",
+    "npm": "^10.1.0",
     "wax-match-axios-client": "^1.4.0"
   }
 }
