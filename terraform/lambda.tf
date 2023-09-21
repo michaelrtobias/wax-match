@@ -35,8 +35,8 @@ resource "aws_lambda_function" "discogs_lambdas" {
       song_processor_queue_url = aws_sqs_queue.song_processor.url
       consumer_key             = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_key.secret_string)["consumer_key"]
       consumer_secret          = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_secret.secret_string)["consumer_secret"]
-      spotify_client_is        = jsondecode(data.aws_secretsmanager_secret_version.spotify_token.secret_string)["spotify_client_id"]
-      spotify_client_secret    = jsondecode(data.aws_secretsmanager_secret_version.spotify_token.secret_string)["spotify_client_secret"]
+      spotify_client_is        = local.spotify_token.spotify_client_id
+      spotify_client_secret    = local.spotify_token.spotify_client_secret
     }
   }
 }
