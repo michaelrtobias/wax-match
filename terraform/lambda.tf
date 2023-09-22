@@ -33,8 +33,8 @@ resource "aws_lambda_function" "discogs_lambdas" {
   environment {
     variables = {
       song_processor_queue_url = aws_sqs_queue.song_processor.url
-      consumer_key             = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_key.secret_string)["consumer_key"]
-      consumer_secret          = jsondecode(data.aws_secretsmanager_secret_version.discogs_consumer_secret.secret_string)["consumer_secret"]
+      consumer_key             = local.discogs_consumer_key
+      consumer_secret          = local.discogs_consumer_secret
       spotify_client_is        = local.spotify_token.spotify_client_id
       spotify_client_secret    = local.spotify_token.spotify_client_secret
     }
