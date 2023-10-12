@@ -10,10 +10,13 @@ resource "aws_api_gateway_rest_api" "waxmatch" {
 }
 
 resource "aws_api_gateway_deployment" "waxmatch" {
-  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
-  stage_name  = "dev"
-  depends_on  = [aws_api_gateway_integration.discogs_auth_request_token]
-
+  rest_api_id       = aws_api_gateway_rest_api.waxmatch.id
+  stage_name        = "dev"
+  depends_on        = [aws_api_gateway_integration.discogs_auth_request_token]
+  stage_description = "Deployed at ${timestamp()}"
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_api_gateway_stage" "waxmatch" {
