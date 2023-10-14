@@ -8,7 +8,6 @@ import {
 } from "@aws-sdk/client-sqs";
 
 export const sendMessageToSQS = async (releases: releases[]): Promise<void> => {
-  console.log("sending message");
   const client = new SQSClient({ region: "us-east-1" });
   try {
     for (const release of releases) {
@@ -16,7 +15,6 @@ export const sendMessageToSQS = async (releases: releases[]): Promise<void> => {
         QueueUrl: process.env.song_processor_queue_url,
         MessageBody: JSON.stringify(release),
       };
-      console.log(params);
       await client.send(new SendMessageCommand(params));
     }
   } catch (error) {
@@ -24,7 +22,7 @@ export const sendMessageToSQS = async (releases: releases[]): Promise<void> => {
     if (error instanceof Error) {
       errorMessage = error.message;
     }
-    console.log(errorMessage);
+    console.error(errorMessage);
     throw new Error(errorMessage);
   }
 };

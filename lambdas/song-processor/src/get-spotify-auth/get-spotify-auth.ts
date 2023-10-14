@@ -19,7 +19,6 @@ export const getSpotifyAuth = async (): Promise<SpotifyAuthResponse> => {
       body,
       config
     );
-    console.log("post response");
     return AuthResponse;
   } catch (error) {
     let errorMessage = "Failed to authenticate withs spotify";

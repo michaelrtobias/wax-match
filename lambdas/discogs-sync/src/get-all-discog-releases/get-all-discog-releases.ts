@@ -35,7 +35,5 @@ export const getAllDiscogReleases = async (
     releases = releases.concat(data.releases);
     page += 1;
   }
-  console.log("releases", releases.length);
-
   return releases;
 };

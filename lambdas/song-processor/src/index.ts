@@ -7,6 +7,6 @@ exports.handler = async (event: SQSEvent): Promise<void> => {
     console.log("access_token", access_token.length);
     console.log("token_type", token_type.length);
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
