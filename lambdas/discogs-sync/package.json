@@ -1,11 +1,11 @@
 {
-  "name": "discogs-get-all-collection-releases",
+  "name": "discogs-sync",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "zipper": "cd ./dist && zip -r9 discogs-get-all-collection-releases.zip . && mv discogs-get-all-collection-releases.zip ../../../terraform/build-artifacts/discogs-get-all-collection-releases.zip",
+    "zipper": "cd ./dist && zip -r9 discogs-sync.zip . && mv discogs-sync.zip ../../../terraform/build-artifacts/discogs-sync.zip",
     "bundle-deps": "cp package*.json ./dist && cd ./dist && npm install --omit-dev",
     "compile": "npx tsc",
     "build": "tsup && npm run bundle-deps && npm run zipper"
@@ -13,16 +13,16 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.114",
-    "@types/node": "^18.16.3",
-    "typescript": "^5.0.4"
+    "@types/aws-lambda": "^8.10.124",
+    "@types/node": "^20.8.4",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.413.0",
-    "@faker-js/faker": "^7.6.0",
-    "aws-sdk": "^2.1369.0",
-    "axios": "^1.5.0",
-    "tsup": "^6.7.0"
+    "@aws-sdk/client-sqs": "^3.427.0",
+    "@faker-js/faker": "^8.1.0",
+    "aws-sdk": "^2.1472.0",
+    "axios": "^1.5.1",
+    "tsup": "^7.2.0"
   },
   "tsup": {
     "entry": [

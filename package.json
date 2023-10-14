@@ -5,7 +5,7 @@
     "lambdas/discogs-request-token",
     "lambdas/discogs-identity",
     "lambdas/discogs-get-collection-releases",
-    "lambdas/discogs-get-all-collection-releases",
+    "lambdas/discogs-sync",
     "lambdas/song-processor"
   ],
   "scripts": {
@@ -15,13 +15,13 @@
     "build": "npm run build --workspaces"
   },
   "devDependencies": {
-    "@types/node": "^20.6.0"
+    "@types/node": "^20.8.5"
   },
   "dependencies": {
-    "axios": "^1.5.0",
-    "eslint": "^8.49.0",
+    "axios": "^1.5.1",
+    "eslint": "^8.51.0",
     "i": "^0.3.7",
-    "npm": "^10.1.0",
+    "npm": "^10.2.0",
     "wax-match-axios-client": "^1.4.0"
   }
 }

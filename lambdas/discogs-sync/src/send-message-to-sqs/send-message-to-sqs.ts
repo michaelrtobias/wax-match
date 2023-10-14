@@ -4,24 +4,27 @@ import {
   SQSClient,
   SendMessageCommand,
   SendMessageCommandInput,
+  SendMessageBatchCommandOutput,
 } from "@aws-sdk/client-sqs";
 
 export const sendMessageToSQS = async (releases: releases[]): Promise<void> => {
+  console.log("sending message");
+  const client = new SQSClient({ region: "us-east-1" });
   try {
-    releases.forEach(async (release) => {
-      const client = new SQSClient({ region: "us-east-1" });
+    for (const release of releases) {
       const params: SendMessageCommandInput = {
         QueueUrl: process.env.song_processor_queue_url,
         MessageBody: JSON.stringify(release),
       };
+      console.log(params);
       await client.send(new SendMessageCommand(params));
-    });
+    }
   } catch (error) {
     let errorMessage = "Failed to send to SQS";
     if (error instanceof Error) {
       errorMessage = error.message;
     }
-    console.error(errorMessage);
+    console.log(errorMessage);
     throw new Error(errorMessage);
   }
 };

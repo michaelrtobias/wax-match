@@ -32,11 +32,10 @@ export const getAllDiscogReleases = async (
       `https://api.discogs.com/users/${queryStringParameters?.discogs_username}/collection/folders/0/releases?per_page=100&page=${page}`,
       config
     );
-    console.log("data: ", data);
     releases = releases.concat(data.releases);
     page += 1;
   }
-  console.log("releases", releases);
+  console.log("releases", releases.length);
 
   return releases;
 };
