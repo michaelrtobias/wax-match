@@ -13,14 +13,16 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.124",
-    "@types/node": "^20.8.6",
-    "@types/qs": "^6.9.8",
+    "@types/aws-lambda": "^8.10.126",
+    "@types/node": "^20.9.0",
+    "@types/qs": "^6.9.10",
+    "@types/spotify-api": "^0.0.25",
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.428.0",
+    "@aws-sdk/client-sqs": "^3.451.0",
     "qs": "^6.11.2",
+    "@types/spotify-api": "^0.0.25",
     "tsup": "^7.2.0"
   },
   "tsup": {

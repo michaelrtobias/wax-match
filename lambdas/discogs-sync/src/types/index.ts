@@ -1,6 +1,6 @@
 export interface DiscogsGetCollectionReleases {
   pagination: pagination;
-  releases: releases[];
+  releases: release[];
 }
 
 export type pagination = {
@@ -10,7 +10,7 @@ export type pagination = {
   items: number;
   urls: object;
 };
-export type releases = {
+export type release = {
   id: number;
   instance_id: number;
   date_added: string;

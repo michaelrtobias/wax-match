@@ -1,9 +1,9 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
-import { releases, FolderData, DiscogsGetCollectionReleases } from "../types";
+import { release, FolderData, DiscogsGetCollectionReleases } from "../types";
 import { APIGatewayProxyEventQueryStringParameters } from "aws-lambda";
 export const getAllDiscogReleases = async (
   queryStringParameters: APIGatewayProxyEventQueryStringParameters
-): Promise<releases[]> => {
+): Promise<release[]> => {
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -17,7 +17,7 @@ export const getAllDiscogReleases = async (
       "User-Agent": "agent",
     },
   };
-  let releases = [] as releases[];
+  let releases = [] as release[];
   const { data: folderData } = await axios.get<FolderData>(
     `https://api.discogs.com/users/${queryStringParameters?.discogs_username}/collection/folders/0`,
     config

@@ -1,4 +1,4 @@
-import { releases } from "../types";
+import { release } from "../types";
 
 import {
   SQSClient,
@@ -7,7 +7,7 @@ import {
   SendMessageBatchCommandOutput,
 } from "@aws-sdk/client-sqs";
 
-export const sendMessageToSQS = async (releases: releases[]): Promise<void> => {
+export const sendMessageToSQS = async (releases: release[]): Promise<void> => {
   const client = new SQSClient({ region: "us-east-1" });
   try {
     for (const release of releases) {
