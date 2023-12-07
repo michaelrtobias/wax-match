@@ -12,8 +12,9 @@ const checkArtists = (
     artist.name.toLowerCase()
   );
   let result;
-
-  for (let i = 0; discogsArtists.length; i++) {
+  console.log("spotifyArtistNames", spotifyArtistNames);
+  console.log("discogsArtists", discogsArtists);
+  for (let i = 0; discogsArtists.length - 1; i++) {
     if (spotifyArtistNames.includes(discogsArtists[i].name.toLowerCase())) {
       result = true;
       break;
@@ -31,10 +32,15 @@ export const matchDiscogsAlbumToSpotifyAlbum = (
 ): string => {
   // on no album found call again for next page
   try {
-    spotifySearchResults.find((album) => {
+    console.log("searching for gold");
+    spotifySearchResults.find((album, i) => {
+      console.log(`${album.name} - ${i}`, album);
+      const spotifyReleaseDate = new Date(album.release_date);
       album.name == masterRelease.title &&
-        checkArtists(masterRelease.artists, album.artists);
+        checkArtists(masterRelease.artists, album.artists) &&
+        spotifyReleaseDate.getFullYear() == masterRelease.year;
     });
+    console.log("match", spotifySearchResults);
   } catch (error) {
     let errorMessage = "Failed to find albums";
     if (error instanceof Error) {
