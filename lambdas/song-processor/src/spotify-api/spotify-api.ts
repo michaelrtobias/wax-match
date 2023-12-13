@@ -5,7 +5,6 @@ export const spotifyAPI = async (
   url_endpoint: string,
   params?: object
 ): Promise<AlbumSearchResponse> => {
-  console.log("url endpoint", url_endpoint);
   try {
     const config: AxiosRequestConfig = {
       headers: {
@@ -15,7 +14,6 @@ export const spotifyAPI = async (
       },
       params: params,
     };
-    console.log("params", config.params);
     const { data: SearchResults } = await axios.get<AlbumSearchResponse>(
       `https://api.spotify.com/v1/${url_endpoint}`,
       config
@@ -23,7 +21,7 @@ export const spotifyAPI = async (
     return SearchResults;
   } catch (error) {
     let errorMessage = "Failed to make call";
-    console.log("Failed to make call", error);
+    console.error("Failed to make call", error);
     if (error instanceof Error) {
       errorMessage = error.message;
     }

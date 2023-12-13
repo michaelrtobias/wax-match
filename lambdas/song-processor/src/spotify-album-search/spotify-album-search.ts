@@ -1,8 +1,4 @@
-import {
-  DiscogsMasterRelease,
-  AlbumSearchResponse,
-  AlbumObjectSimplified,
-} from "../types";
+import { DiscogsMasterRelease, AlbumObjectSimplified } from "../types";
 import { spotifyAPI } from "../spotify-api";
 
 const formatSearchQuery = (masterRelease: DiscogsMasterRelease): string =>
@@ -28,8 +24,6 @@ export const spotifyAlbumSearch = async (
     let limit = 50;
     let totalItems = 0;
     while (page < 3) {
-      console.log("in the loop", page);
-      console.log("search query", formatSearchQuery(masterRelease));
       const results = await spotifyAPI(access_token, "search", {
         q: formatSearchQuery(masterRelease),
         type: "album",
@@ -37,17 +31,14 @@ export const spotifyAlbumSearch = async (
         offset: calculateOffset(limit, page).toString(),
       } as spotifyAlbumSearchParams);
       totalItems = results.albums.total;
-      console.log("totalItems", totalItems);
       SearchResults.push(...results.albums.items);
       page += 1;
       if (totalItems - limit * page <= 0) {
-        console.log("total items hit");
         break;
       } else {
         continue;
       }
     }
-    console.log("amount of results", SearchResults.length);
     return SearchResults;
   } catch (error) {
     let errorMessage = "Failed to find albums";

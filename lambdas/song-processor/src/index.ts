@@ -11,20 +11,16 @@ exports.handler = async (event: SQSEvent): Promise<void> => {
   try {
     // get spotify creds
     const { access_token } = await getSpotifyAuth();
-    console.log("access token length", access_token.length);
-    console.log("spotify auth is done");
-
     // get extra discogs info
-    const { versions, mainRelease, masterRelease } =
-      await getDiscogsMainRelaseAndVersions(album);
-    console.log("recieved discogs info");
+    const { masterRelease } = await getDiscogsMainRelaseAndVersions(album);
 
     // search spotify
     const searchResults = await spotifyAlbumSearch(access_token, masterRelease);
-    // console.log("searchResults", searchResults);
 
     // match discogs release to spotify album to get spotify album id
     matchDiscogsAlbumToSpotifyAlbum(masterRelease, searchResults);
+
+    // write to db
   } catch (e) {
     console.error(e);
   }

@@ -4,43 +4,43 @@ import {
   ArtistObjectSimplified,
   DiscogsArtist,
 } from "../types";
+
+const formatArtistList = (
+  artistList: DiscogsArtist[] | ArtistObjectSimplified[]
+): string[] => artistList.map((artist) => artist.name.toLowerCase());
+
 const checkArtists = (
   discogsArtists: DiscogsArtist[],
   spotifyArtists: ArtistObjectSimplified[]
 ): boolean => {
-  const spotifyArtistNames = spotifyArtists.map((artist) =>
-    artist.name.toLowerCase()
-  );
-  let result;
-  console.log("spotifyArtistNames", spotifyArtistNames);
-  console.log("discogsArtists", discogsArtists);
-  for (let i = 0; discogsArtists.length - 1; i++) {
-    if (spotifyArtistNames.includes(discogsArtists[i].name.toLowerCase())) {
+  const spotifyArtistNames = formatArtistList(spotifyArtists);
+  const discogsArtistNames = formatArtistList(discogsArtists);
+  let result = false;
+
+  for (let i = 0; i < discogsArtistNames.length; i++) {
+    if (spotifyArtistNames.includes(discogsArtistNames[i])) {
       result = true;
       break;
-    } else {
-      result = false;
-      continue;
     }
   }
-  return result || false;
+  return result;
 };
 
 export const matchDiscogsAlbumToSpotifyAlbum = (
   masterRelease: DiscogsMasterRelease,
   spotifySearchResults: AlbumObjectSimplified[]
-): string => {
-  // on no album found call again for next page
+): AlbumObjectSimplified => {
   try {
-    console.log("searching for gold");
-    spotifySearchResults.find((album, i) => {
-      console.log(`${album.name} - ${i}`, album);
+    const match = spotifySearchResults.find((album, i) => {
       const spotifyReleaseDate = new Date(album.release_date);
-      album.name == masterRelease.title &&
+      return (
+        album.name == masterRelease.title &&
         checkArtists(masterRelease.artists, album.artists) &&
-        spotifyReleaseDate.getFullYear() == masterRelease.year;
+        spotifyReleaseDate.getFullYear() == masterRelease.year
+      );
     });
-    console.log("match", spotifySearchResults);
+    console.log("match", match);
+    return match as AlbumObjectSimplified;
   } catch (error) {
     let errorMessage = "Failed to find albums";
     if (error instanceof Error) {
@@ -49,5 +49,4 @@ export const matchDiscogsAlbumToSpotifyAlbum = (
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
-  return "spotify api";
 };
