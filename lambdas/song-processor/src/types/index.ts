@@ -27,4 +27,10 @@ export {
   ArtistObjectSimplified,
   AlbumTracksResponse,
   TrackObjectSimplified,
+  SpotifyAPIParamsBase,
+  SpotifySearchParams,
+  SpotifyGetTracksAudioFeaturesParams,
+  MultipleAudioFeaturesResponse,
+  SingleAlbumResponse,
+  Genres,
 } from "./spotify";

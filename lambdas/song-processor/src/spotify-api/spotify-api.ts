@@ -1,11 +1,21 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { AlbumSearchResponse, AlbumTracksResponse } from "../types";
+import {
+  AlbumSearchResponse,
+  AlbumTracksResponse,
+  SingleAlbumResponse,
+  MultipleAudioFeaturesResponse,
+} from "../types";
 
 export const spotifyAPI = async (
   access_token: string,
   url_endpoint: string,
   params?: object
-): Promise<AlbumSearchResponse | AlbumTracksResponse> => {
+): Promise<
+  | AlbumSearchResponse
+  | AlbumTracksResponse
+  | MultipleAudioFeaturesResponse
+  | SingleAlbumResponse
+> => {
   try {
     const config: AxiosRequestConfig = {
       headers: {
@@ -16,7 +26,10 @@ export const spotifyAPI = async (
       params: params,
     };
     const { data: Results } = await axios.get<
-      AlbumSearchResponse | AlbumTracksResponse
+      | AlbumSearchResponse
+      | AlbumTracksResponse
+      | MultipleAudioFeaturesResponse
+      | SingleAlbumResponse
     >(`https://api.spotify.com/v1/${url_endpoint}`, config);
     return Results;
   } catch (error) {

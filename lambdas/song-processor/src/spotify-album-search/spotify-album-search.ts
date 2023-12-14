@@ -2,19 +2,13 @@ import {
   DiscogsMasterRelease,
   AlbumObjectSimplified,
   AlbumSearchResponse,
+  SpotifySearchParams,
 } from "../types";
 import { spotifyAPI } from "../spotify-api";
 const formatSearchQuery = (masterRelease: DiscogsMasterRelease): string =>
   encodeURIComponent(
     `album:${masterRelease.title} artist:${masterRelease.artists[0].name} year:${masterRelease.year}`
   );
-
-type spotifyAlbumSearchParams = {
-  q: string;
-  type: "album";
-  limit: string;
-  offset: string;
-};
 
 const calculateOffset = (limit: number, page: number) => limit * page;
 export const spotifyAlbumSearch = async (
@@ -32,7 +26,7 @@ export const spotifyAlbumSearch = async (
         type: "album",
         limit: limit.toString(),
         offset: calculateOffset(limit, page).toString(),
-      } as spotifyAlbumSearchParams)) as AlbumSearchResponse;
+      } as SpotifySearchParams)) as AlbumSearchResponse;
       totalItems = results.albums.total;
       SearchResults.push(...results.albums.items);
       page += 1;

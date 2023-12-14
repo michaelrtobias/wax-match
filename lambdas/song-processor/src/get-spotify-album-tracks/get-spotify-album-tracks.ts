@@ -3,13 +3,8 @@ import {
   AlbumObjectSimplified,
   AlbumTracksResponse,
   TrackObjectSimplified,
+  SpotifyAPIParamsBase,
 } from "../types";
-
-type spotifyGetAlbumTracksParams = {
-  market?: string;
-  limit?: string;
-  offset?: string;
-};
 
 const calculateOffset = (limit: number, page: number) => limit * page;
 
@@ -22,14 +17,14 @@ export const getSpotifyAlbumTracks = async (
     let page = 0;
     let limit = 50;
     let totalItems = 0;
-    while (page < 3) {
+    while (page < 4) {
       const results = (await spotifyAPI(
         access_token,
         `albums/${album.id}/tracks`,
         {
           limit: limit.toString(),
           offset: calculateOffset(limit, page).toString(),
-        } as spotifyGetAlbumTracksParams
+        } as SpotifyAPIParamsBase
       )) as AlbumTracksResponse;
       totalItems = results.total;
       AlbumTracks.push(...results.items);
