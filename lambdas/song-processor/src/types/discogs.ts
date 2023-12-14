@@ -211,7 +211,7 @@ export interface DiscogsVersions {
   versions: DiscogsVersion[];
 }
 
-export interface getDiscogsMainRelaseAndVersions {
+export interface DiscogsMainRelaseAndVersions {
   masterRelease: DiscogsMasterRelease;
   mainRelease: DiscogsMainRelease;
   versions: DiscogsVersions;

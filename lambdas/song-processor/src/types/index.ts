@@ -15,10 +15,11 @@ export {
   DiscogsFormat,
   DiscogsVersions,
   DiscogsVersion,
-  getDiscogsMainRelaseAndVersions,
+  DiscogsMainRelaseAndVersions,
   DiscogsVersionFilterFacet,
   DiscogsContributor,
   DiscogsCommunity,
+  DiscogsMainRelease,
 } from "./discogs";
 export {
   AlbumSearchResponse,

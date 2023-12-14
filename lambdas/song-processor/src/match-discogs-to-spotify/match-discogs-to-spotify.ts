@@ -36,7 +36,8 @@ export const matchDiscogsAlbumToSpotifyAlbum = (
       return (
         album.name == masterRelease.title &&
         checkArtists(masterRelease.artists, album.artists) &&
-        spotifyReleaseDate.getFullYear() == masterRelease.year
+        spotifyReleaseDate.getFullYear() == masterRelease.year &&
+        album.total_tracks === masterRelease.tracklist.length
       );
     });
     console.log("match", match);
