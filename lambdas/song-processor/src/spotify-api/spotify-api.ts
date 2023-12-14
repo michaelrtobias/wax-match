@@ -1,10 +1,11 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { AlbumSearchResponse, AlbumTracksResponse } from "../types";
 
 export const spotifyAPI = async (
   access_token: string,
   url_endpoint: string,
   params?: object
-): Promise<AlbumSearchResponse> => {
+): Promise<AlbumSearchResponse | AlbumTracksResponse> => {
   try {
     const config: AxiosRequestConfig = {
       headers: {
@@ -14,11 +15,10 @@ export const spotifyAPI = async (
       },
       params: params,
     };
-    const { data: SearchResults } = await axios.get<AlbumSearchResponse>(
-      `https://api.spotify.com/v1/${url_endpoint}`,
-      config
-    );
-    return SearchResults;
+    const { data: Results } = await axios.get<
+      AlbumSearchResponse | AlbumTracksResponse
+    >(`https://api.spotify.com/v1/${url_endpoint}`, config);
+    return Results;
   } catch (error) {
     let errorMessage = "Failed to make call";
     console.error("Failed to make call", error);

@@ -7,7 +7,10 @@ import {
 
 const formatArtistList = (
   artistList: DiscogsArtist[] | ArtistObjectSimplified[]
-): string[] => artistList.map((artist) => artist.name.toLowerCase());
+): string[] =>
+  artistList.map((artist: DiscogsArtist | ArtistObjectSimplified) =>
+    artist.name.toLowerCase()
+  );
 
 const checkArtists = (
   discogsArtists: DiscogsArtist[],
@@ -40,7 +43,6 @@ export const matchDiscogsAlbumToSpotifyAlbum = (
         album.total_tracks === masterRelease.tracklist.length
       );
     });
-    console.log("match", match);
     return match as AlbumObjectSimplified;
   } catch (error) {
     let errorMessage = "Failed to find albums";

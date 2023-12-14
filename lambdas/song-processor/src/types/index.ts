@@ -25,4 +25,6 @@ export {
   AlbumSearchResponse,
   AlbumObjectSimplified,
   ArtistObjectSimplified,
+  AlbumTracksResponse,
+  TrackObjectSimplified,
 } from "./spotify";

@@ -22,7 +22,6 @@
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.451.0",
     "qs": "^6.11.2",
-    "@types/spotify-api": "^0.0.25",
     "tsup": "^7.2.0"
   },
   "tsup": {

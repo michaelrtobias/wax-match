@@ -1,6 +1,9 @@
-import { DiscogsMasterRelease, AlbumObjectSimplified } from "../types";
+import {
+  DiscogsMasterRelease,
+  AlbumObjectSimplified,
+  AlbumSearchResponse,
+} from "../types";
 import { spotifyAPI } from "../spotify-api";
-
 const formatSearchQuery = (masterRelease: DiscogsMasterRelease): string =>
   encodeURIComponent(
     `album:${masterRelease.title} artist:${masterRelease.artists[0].name} year:${masterRelease.year}`
@@ -19,17 +22,17 @@ export const spotifyAlbumSearch = async (
   masterRelease: DiscogsMasterRelease
 ): Promise<AlbumObjectSimplified[]> => {
   try {
-    let SearchResults = [];
+    let SearchResults: AlbumObjectSimplified[] = [];
     let page = 0;
     let limit = 50;
-    let totalItems = 0;
-    while (page < 3) {
-      const results = await spotifyAPI(access_token, "search", {
+    let totalItems = 1;
+    while (page < Math.ceil(totalItems / 50)) {
+      const results = (await spotifyAPI(access_token, "search", {
         q: formatSearchQuery(masterRelease),
         type: "album",
         limit: limit.toString(),
         offset: calculateOffset(limit, page).toString(),
-      } as spotifyAlbumSearchParams);
+      } as spotifyAlbumSearchParams)) as AlbumSearchResponse;
       totalItems = results.albums.total;
       SearchResults.push(...results.albums.items);
       page += 1;
@@ -39,7 +42,7 @@ export const spotifyAlbumSearch = async (
         continue;
       }
     }
-    return SearchResults;
+    return SearchResults as AlbumObjectSimplified[];
   } catch (error) {
     let errorMessage = "Failed to find albums";
     if (error instanceof Error) {
