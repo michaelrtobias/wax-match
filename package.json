@@ -4,6 +4,7 @@
     "lambdas/discogs-access-token",
     "lambdas/discogs-request-token",
     "lambdas/discogs-identity",
+    "lambdas/discogs-get-all-collection-releases",
     "lambdas/discogs-get-collection-releases",
     "lambdas/discogs-sync",
     "lambdas/song-processor"

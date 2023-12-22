@@ -23,14 +23,15 @@ resource "aws_iam_role" "discogs_lambdas" {
 
 
 resource "aws_lambda_function" "discogs_lambdas" {
-  for_each         = var.discogs_lambdas
-  function_name    = each.key
-  role             = aws_iam_role.discogs_lambdas[each.key].arn
-  handler          = "index.handler"
-  filename         = "./build-artifacts/${each.key}.zip"
-  source_code_hash = filebase64sha256("./build-artifacts/${each.key}.zip")
-  runtime          = "nodejs18.x"
-  timeout          = 30
+  for_each                       = var.discogs_lambdas
+  function_name                  = each.key
+  role                           = aws_iam_role.discogs_lambdas[each.key].arn
+  handler                        = "index.handler"
+  filename                       = "./build-artifacts/${each.key}.zip"
+  source_code_hash               = filebase64sha256("./build-artifacts/${each.key}.zip")
+  runtime                        = "nodejs18.x"
+  timeout                        = 30
+  reserved_concurrent_executions = 25
   environment {
     variables = {
       song_processor_queue_url = aws_sqs_queue.song_processor.url

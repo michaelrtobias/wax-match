@@ -9,8 +9,10 @@ import { getSpotifyAlbumTrackAudioFeatures } from "./get-spotify-album-track-aud
 import { getSpotifyAlbumGenres } from "./get-spotify-album-genres";
 exports.handler = async (event: SQSEvent): Promise<void> => {
   console.log("event", event);
-  const { body } = event.Records[0];
+  const { body, messageAttributes } = event.Records[0];
   const album = JSON.parse(body) as DiscogsRelease;
+  console.log("userId", messageAttributes);
+  console.log("userId");
   try {
     // get spotify creds
     const { access_token } = await getSpotifyAuth();
@@ -34,7 +36,7 @@ exports.handler = async (event: SQSEvent): Promise<void> => {
     );
     // get the matched album's genres
     const albumGenres = await getSpotifyAlbumGenres(access_token, match);
-
+    console.log("match", match);
     // write to db
   } catch (e) {
     console.error(e);

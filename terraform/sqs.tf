@@ -13,4 +13,5 @@ resource "aws_sqs_queue" "song_processor" {
 resource "aws_lambda_event_source_mapping" "song_processor" {
   event_source_arn = aws_sqs_queue.song_processor.arn
   function_name    = local.discogs_lambdas["song-processor"].arn
+  batch_size       = 1
 }
