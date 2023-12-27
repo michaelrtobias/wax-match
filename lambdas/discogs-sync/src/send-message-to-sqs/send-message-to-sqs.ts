@@ -14,6 +14,7 @@ export const sendMessageToSQS = async (
   const client = new SQSClient({ region: "us-east-1" });
   try {
     for (const release of releases) {
+      console.log(release);
       const params: SendMessageCommandInput = {
         QueueUrl: process.env.song_processor_queue_url,
         MessageBody: JSON.stringify(release),

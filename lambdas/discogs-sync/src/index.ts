@@ -1,15 +1,11 @@
 import { AxiosError } from "axios";
 import { APIGatewayProxyResult, APIGatewayProxyEvent } from "aws-lambda";
-import { getAllDiscogReleases } from "./get-all-discog-releases";
 import { sendMessageToSQS } from "./send-message-to-sqs";
-import { getAlbumsToSync } from "./get-albums-to-sync/get-albums-to-sync";
+import { release } from "./types";
 
 type DiscogsSyncInputs = {
   userId: string;
-  albumIds: string[];
-  oauthToken: string;
-  oauthTokenSecret: string;
-  discogsUsername: string;
+  releases: release[];
 };
 exports.handler = async (
   event: APIGatewayProxyEvent
@@ -18,23 +14,10 @@ exports.handler = async (
   let { body } = event;
   const parsedBody: DiscogsSyncInputs =
     typeof body === "string" ? JSON.parse(body) : body;
-  console.log(parsedBody);
-  const { userId, albumIds, oauthToken, oauthTokenSecret, discogsUsername } =
-    parsedBody;
-  console.log(1);
+
+  const { userId, releases } = parsedBody;
   try {
-    const releases = await getAllDiscogReleases(
-      oauthToken,
-      oauthTokenSecret,
-      discogsUsername
-    );
-    console.log(
-      "releases",
-      releases.map((release) => release.basic_information)
-    );
-    console.log("user Id", userId);
-    const releasesForSync = getAlbumsToSync(albumIds, releases);
-    await sendMessageToSQS(releasesForSync, userId);
+    await sendMessageToSQS(releases, userId);
     let response = {
       statusCode: 200,
       headers: {
@@ -43,7 +26,7 @@ exports.handler = async (
         "Access-Control-Allow-Headers": "Content-Type",
         "Access-Control-Allow-Methods": "OPTIONS,POST",
       },
-      body: JSON.stringify(releases),
+      body: `${releases.length} releases have been sent to be synced.`,
     };
 
     return response;
