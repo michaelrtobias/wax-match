@@ -7,7 +7,7 @@ export const getAlbumsToSync = (
   let results: release[] = [];
   albumIds.forEach((id) => {
     const foundAlbum = discogsAlbums.find(
-      (album) => album.id.toString() === id
+      (album) => album.basic_information.id.toString() === id
     );
     if (Object.keys(foundAlbum as release).length > 0) {
       results = results.concat(foundAlbum as release);

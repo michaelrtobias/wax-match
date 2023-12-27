@@ -579,7 +579,7 @@ resource "aws_api_gateway_integration_response" "discogs_sync_options_integratio
 resource "aws_api_gateway_method" "discogs_sync" {
   rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
   resource_id   = aws_api_gateway_resource.discogs_sync.id
-  http_method   = "GET"
+  http_method   = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.waxmatch.id
 }

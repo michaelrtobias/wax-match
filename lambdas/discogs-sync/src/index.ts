@@ -18,17 +18,21 @@ exports.handler = async (
   let { body } = event;
   const parsedBody: DiscogsSyncInputs =
     typeof body === "string" ? JSON.parse(body) : body;
-
+  console.log(parsedBody);
   const { userId, albumIds, oauthToken, oauthTokenSecret, discogsUsername } =
     parsedBody;
-
+  console.log(1);
   try {
     const releases = await getAllDiscogReleases(
       oauthToken,
       oauthTokenSecret,
       discogsUsername
     );
-    console.log(userId);
+    console.log(
+      "releases",
+      releases.map((release) => release.basic_information)
+    );
+    console.log("user Id", userId);
     const releasesForSync = getAlbumsToSync(albumIds, releases);
     await sendMessageToSQS(releasesForSync, userId);
     let response = {
