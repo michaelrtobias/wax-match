@@ -1,9 +1,27 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 import { release, FolderData, DiscogsGetCollectionReleases } from "../types";
 import { APIGatewayProxyEventQueryStringParameters } from "aws-lambda";
+
+const formatResultsWithPagination = (
+  releases: release[]
+): DiscogsGetCollectionReleases => {
+  return {
+    releases: releases,
+    pagination: {
+      page: 1,
+      pages: 1,
+      per_page: "all",
+      items: releases.length,
+      urls: {
+        last: "",
+        next: "",
+      },
+    },
+  };
+};
 export const getAllDiscogReleases = async (
   queryStringParameters: APIGatewayProxyEventQueryStringParameters
-): Promise<release[]> => {
+): Promise<DiscogsGetCollectionReleases> => {
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -35,5 +53,5 @@ export const getAllDiscogReleases = async (
     releases = releases.concat(data.releases);
     page += 1;
   }
-  return releases;
+  return formatResultsWithPagination(releases);
 };

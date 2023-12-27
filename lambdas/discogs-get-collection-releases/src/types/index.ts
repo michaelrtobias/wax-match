@@ -6,7 +6,7 @@ export interface DiscogsGetCollectionReleases {
 export type pagination = {
   page: number;
   pages: number;
-  per_page: number;
+  per_page: number | "all";
   items: number;
   urls: object;
 };
