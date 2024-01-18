@@ -1,0 +1,46 @@
+{
+  "name": "album-writer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "zipper": "cd ./dist && zip -r9 album-writer.zip . && mv album-writer.zip ../../../terraform/build-artifacts/album-writer.zip",
+    "bundle-deps": "cp package*.json ./dist && cd ./dist && npm install --omit-dev",
+    "compile": "npx tsc",
+    "build": "tsup && npm run bundle-deps && npm run zipper"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.124",
+    "@types/node": "^20.8.4",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.427.0",
+    "@faker-js/faker": "^8.1.0",
+    "aws-sdk": "^2.1472.0",
+    "axios": "^1.5.1",
+    "tsup": "^7.2.0"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "splitting": false,
+    "sourcemap": "inline",
+    "clean": true,
+    "bundle": true,
+    "dts": true,
+    "format": "cjs",
+    "minify": true,
+    "minifyIdentifiers": true,
+    "minifySyntax": true,
+    "minifyWhitespace": true,
+    "outDir": "./dist",
+    "platform": "node",
+    "target": "node18",
+    "tsconfig": "./tsconfig.json"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "album-processor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "zipper": "cd ./dist && zip -r9 album-processor.zip . && mv album-processor.zip ../../../terraform/build-artifacts/album-processor.zip",
+    "bundle-deps": "cp package*.json ./dist && cd ./dist && npm install --omit-dev",
+    "compile": "npx tsc",
+    "build": "tsup && npm run bundle-deps && npm run zipper"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.126",
+    "@types/node": "^20.9.0",
+    "@types/qs": "^6.9.10",
+    "@types/spotify-api": "^0.0.25",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.451.0",
+    "qs": "^6.11.2",
+    "tsup": "^7.2.0"
+  },
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "splitting": false,
+    "sourcemap": "inline",
+    "clean": true,
+    "bundle": true,
+    "dts": true,
+    "format": "cjs",
+    "minify": true,
+    "minifyIdentifiers": true,
+    "minifySyntax": true,
+    "minifyWhitespace": true,
+    "outDir": "./dist",
+    "platform": "node",
+    "target": "node18",
+    "tsconfig": "./tsconfig.json"
+  }
+}

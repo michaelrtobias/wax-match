@@ -5,6 +5,9 @@ variable "discogs_lambdas" {
     discogs-access-token            = "discogs-access-token"
     discogs-identity                = "discogs-identity"
     discogs-get-collection-releases = "discogs-get-collection-releases"
+    discogs-sync                    = "discogs-sync"
+    album-processor                 = "album-processor"
+    album-writer                    = "album-writer"
   }
 }
 

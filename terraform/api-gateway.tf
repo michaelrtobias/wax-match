@@ -519,3 +519,112 @@ resource "aws_lambda_permission" "discogs_collection_releases_lambda" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.waxmatch.execution_arn}/*/*/*"
 }
+
+// discogs sync
+
+resource "aws_api_gateway_resource" "discogs_sync" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  parent_id   = aws_api_gateway_resource.discogs_collections.id
+  path_part   = "sync"
+}
+
+resource "aws_api_gateway_method" "discogs_sync_options_method" {
+  rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
+  resource_id   = aws_api_gateway_resource.discogs_sync.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+resource "aws_api_gateway_method_response" "discogs_sync_options_200" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  resource_id = aws_api_gateway_resource.discogs_sync.id
+  http_method = aws_api_gateway_method.discogs_sync_options_method.http_method
+  status_code = "200"
+  response_models = {
+    "application/json" = "Empty"
+  }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers"     = true,
+    "method.response.header.Access-Control-Allow-Methods"     = true,
+    "method.response.header.Access-Control-Allow-Origin"      = true,
+    "method.response.header.Access-Control-Allow-Credentials" = true
+  }
+  depends_on = [aws_api_gateway_method.discogs_sync_options_method]
+}
+resource "aws_api_gateway_integration" "discogs_sync_options_integration" {
+  rest_api_id          = aws_api_gateway_rest_api.waxmatch.id
+  resource_id          = aws_api_gateway_resource.discogs_sync.id
+  http_method          = aws_api_gateway_method.discogs_sync_options_method.http_method
+  type                 = "MOCK"
+  passthrough_behavior = "WHEN_NO_MATCH"
+  request_templates = {
+    "application/json" = "{ 'statusCode': 200 }"
+  }
+  depends_on = [aws_api_gateway_method.discogs_sync_options_method]
+}
+resource "aws_api_gateway_integration_response" "discogs_sync_options_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  resource_id = aws_api_gateway_resource.discogs_sync.id
+  http_method = aws_api_gateway_method.discogs_sync_options_method.http_method
+  status_code = aws_api_gateway_method_response.discogs_sync_options_200.status_code
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers"     = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods"     = "'GET,OPTIONS,POST,PUT'",
+    "method.response.header.Access-Control-Allow-Origin"      = "'*'",
+    "method.response.header.Access-Control-Allow-Credentials" = "'true'"
+  }
+  depends_on = [aws_api_gateway_method_response.discogs_sync_options_200]
+}
+
+// discogs get sync
+resource "aws_api_gateway_method" "discogs_sync" {
+  rest_api_id   = aws_api_gateway_rest_api.waxmatch.id
+  resource_id   = aws_api_gateway_resource.discogs_sync.id
+  http_method   = "POST"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.waxmatch.id
+}
+
+resource "aws_api_gateway_method_response" "discogs_sync_200" {
+  rest_api_id         = aws_api_gateway_rest_api.waxmatch.id
+  resource_id         = aws_api_gateway_resource.discogs_sync.id
+  http_method         = aws_api_gateway_method.discogs_sync.http_method
+  response_parameters = { "method.response.header.Access-Control-Allow-Origin" = true }
+  response_models = {
+    "application/json" = "Empty"
+  }
+  status_code = "200"
+}
+
+resource "aws_api_gateway_method_response" "discogs_sync_400" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  resource_id = aws_api_gateway_resource.discogs_sync.id
+  http_method = aws_api_gateway_method.discogs_sync.http_method
+  status_code = "400"
+}
+
+resource "aws_api_gateway_integration" "discogs_sync" {
+  rest_api_id             = aws_api_gateway_rest_api.waxmatch.id
+  resource_id             = aws_api_gateway_resource.discogs_sync.id
+  http_method             = aws_api_gateway_method.discogs_sync.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = local.discogs_lambdas["discogs-sync"].invoke_arn
+}
+
+resource "aws_api_gateway_integration_response" "discogs_sync" {
+  rest_api_id = aws_api_gateway_rest_api.waxmatch.id
+  resource_id = aws_api_gateway_resource.discogs_sync.id
+  http_method = aws_api_gateway_method.discogs_sync.http_method
+  status_code = "200"
+
+  response_templates = {
+    "application/json" = ""
+  }
+}
+resource "aws_lambda_permission" "discogs_sync_lambda" {
+  statement_id  = "AllowTMGReaddiscogs_syncAPIInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = local.discogs_lambdas["discogs-sync"].function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.waxmatch.execution_arn}/*/*/*"
+}

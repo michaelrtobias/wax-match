@@ -1,10 +1,13 @@
 import axios, { AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
-import { APIGatewayProxyResult, APIGatewayProxyEvent } from "aws-lambda";
-
+import {
+  APIGatewayProxyResult,
+  APIGatewayProxyEvent,
+  APIGatewayProxyEventQueryStringParameters,
+} from "aws-lambda";
+import { getAllDiscogReleases } from "./get-all-discog-releases";
 exports.handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  console.log("event", event);
   const { queryStringParameters } = event;
 
   const config: AxiosRequestConfig = {
@@ -21,10 +24,19 @@ exports.handler = async (
     },
   };
   try {
-    const { data } = await axios.get<AxiosResponse>(
-      `https://api.discogs.com/users/${queryStringParameters?.discogs_username}/collection/folders/0/releases`,
-      config
-    );
+    let results;
+    if (queryStringParameters?.per_page === "all") {
+      const releases = await getAllDiscogReleases(
+        queryStringParameters as APIGatewayProxyEventQueryStringParameters
+      );
+      results = releases;
+    } else {
+      const { data } = await axios.get<AxiosResponse>(
+        `https://api.discogs.com/users/${queryStringParameters?.discogs_username}/collection/folders/0/releases?per_page=${queryStringParameters?.per_page}&page=${queryStringParameters?.page}`,
+        config
+      );
+      results = data;
+    }
 
     let response = {
       statusCode: 200,
@@ -34,7 +46,7 @@ exports.handler = async (
         "Access-Control-Allow-Headers": "Content-Type",
         "Access-Control-Allow-Methods": "OPTIONS,GET",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(results),
     };
     return response;
   } catch (error) {
