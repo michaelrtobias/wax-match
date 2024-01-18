@@ -6,7 +6,8 @@ variable "discogs_lambdas" {
     discogs-identity                = "discogs-identity"
     discogs-get-collection-releases = "discogs-get-collection-releases"
     discogs-sync                    = "discogs-sync"
-    song-processor                  = "song-processor"
+    album-processor                 = "album-processor"
+    album-writer                    = "album-writer"
   }
 }
 
