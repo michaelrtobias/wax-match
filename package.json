@@ -7,7 +7,8 @@
     "lambdas/discogs-get-all-collection-releases",
     "lambdas/discogs-get-collection-releases",
     "lambdas/discogs-sync",
-    "lambdas/song-processor"
+    "lambdas/album-processor",
+    "lambdas/album-writer"
   ],
   "scripts": {
     "zipper": "npm run zipper --workspaces",

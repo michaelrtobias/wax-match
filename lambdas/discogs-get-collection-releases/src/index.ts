@@ -24,7 +24,6 @@ exports.handler = async (
     },
   };
   try {
-    console.log(queryStringParameters?.per_page);
     let results;
     if (queryStringParameters?.per_page === "all") {
       const releases = await getAllDiscogReleases(
