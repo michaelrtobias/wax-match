@@ -14,7 +14,7 @@ export const sendMessageToSQS = async (
   try {
     for (const release of releases) {
       const params: SendMessageCommandInput = {
-        QueueUrl: process.env.song_processor_queue_url,
+        QueueUrl: process.env.album_processor_queue_url,
         MessageBody: JSON.stringify(release),
         MessageAttributes: {
           UserId: {

@@ -20,6 +20,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.496.0",
     "@aws-sdk/client-sqs": "^3.451.0",
     "qs": "^6.11.2",
     "tsup": "^7.2.0"

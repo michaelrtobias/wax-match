@@ -1,9 +1,8 @@
 resource "aws_sqs_queue" "album_processor" {
-  name                      = "album-processor"
-  delay_seconds             = 30
-  max_message_size          = 2048
-  message_retention_seconds = 86400
-  receive_wait_time_seconds = 10
+  name                       = "album-processor"
+  visibility_timeout_seconds = 30
+  message_retention_seconds  = 86400
+  receive_wait_time_seconds  = 10
   # redrive_policy = jsonencode({
   #   deadLetterTargetArn = aws_sqs_queue.terraform_queue_deadletter.arn
   #   maxReceiveCount     = 4
@@ -17,11 +16,10 @@ resource "aws_lambda_event_source_mapping" "album_processor" {
 }
 
 resource "aws_sqs_queue" "album_writer" {
-  name                      = "album-writer"
-  delay_seconds             = 30
-  max_message_size          = 2048
-  message_retention_seconds = 86400
-  receive_wait_time_seconds = 10
+  name                       = "album-writer"
+  visibility_timeout_seconds = 30
+  message_retention_seconds  = 86400
+  receive_wait_time_seconds  = 10
   # redrive_policy = jsonencode({
   #   deadLetterTargetArn = aws_sqs_queue.terraform_queue_deadletter.arn
   #   maxReceiveCount     = 4

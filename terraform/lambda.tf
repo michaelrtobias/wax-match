@@ -35,6 +35,7 @@ resource "aws_lambda_function" "discogs_lambdas" {
   environment {
     variables = {
       album_processor_queue_url = aws_sqs_queue.album_processor.url
+      album_processor_bucket    = aws_s3_bucket.album_processor.bucket
       album_writer_queue_url    = aws_sqs_queue.album_writer.url
       consumer_key              = local.discogs_consumer_key
       consumer_secret           = local.discogs_consumer_secret
@@ -171,4 +172,47 @@ resource "aws_iam_policy" "send_sqs_messages_album_writer_queue" {
 resource "aws_iam_role_policy_attachment" "send_sqs_messages_album_writer_queue_discogs_sync" {
   role       = local.discogs_lambda_roles["album-processor"].name
   policy_arn = aws_iam_policy.send_sqs_messages_album_writer_queue.arn
+}
+data "aws_iam_policy_document" "send_match_to_s3" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:PutObject"
+    ]
+    resources = ["${aws_s3_bucket.album_processor.arn}", "${aws_s3_bucket.album_processor.arn}/*"]
+  }
+}
+
+resource "aws_iam_policy" "send_match_to_s3" {
+  name        = "send-match-to-s3"
+  path        = "/"
+  description = "IAM policy for sending matches from the album processor lambda to s3 to be pulled fromtthe writer lambda"
+  policy      = data.aws_iam_policy_document.send_match_to_s3.json
+}
+
+resource "aws_iam_role_policy_attachment" "send_match_to_s3_discogs_sync" {
+  role       = local.discogs_lambda_roles["album-processor"].name
+  policy_arn = aws_iam_policy.send_match_to_s3.arn
+}
+
+data "aws_iam_policy_document" "get_match_from_s3" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject"
+    ]
+    resources = ["${aws_s3_bucket.album_processor.arn}", "${aws_s3_bucket.album_processor.arn}/*"]
+  }
+}
+
+resource "aws_iam_policy" "get_match_from_s3" {
+  name        = "get-match-from-s3"
+  path        = "/"
+  description = "IAM policy for recieving matches from  album processor bucket to stored in the db"
+  policy      = data.aws_iam_policy_document.get_match_from_s3.json
+}
+
+resource "aws_iam_role_policy_attachment" "get_match_from_s3_discogs_sync" {
+  role       = local.discogs_lambda_roles["album-writer"].name
+  policy_arn = aws_iam_policy.get_match_from_s3.arn
 }

@@ -8,6 +8,8 @@ import { getSpotifyAlbumTracks } from "./get-spotify-album-tracks";
 import { getSpotifyAlbumTrackAudioFeatures } from "./get-spotify-album-track-audio-features";
 import { getSpotifyAlbumGenres } from "./get-spotify-album-genres";
 import { sendMessageToAlbumWriterSQS } from "./send-message-to-album-writer-sqs";
+import { albumMapper } from "./album-mapper";
+import { sendMatchToS3 } from "./send-match-to-s3";
 exports.handler = async (event: SQSEvent): Promise<void> => {
   const { body, messageAttributes } = event.Records[0];
   const album = JSON.parse(body) as DiscogsRelease;
@@ -36,8 +38,17 @@ exports.handler = async (event: SQSEvent): Promise<void> => {
     // get the matched album's genres
     const albumGenres = await getSpotifyAlbumGenres(access_token, match);
 
+    // map all the data
+    const mappedresults = albumMapper(
+      album,
+      match,
+      trackAudioFeatures,
+      albumGenres
+    );
+
+    await sendMatchToS3(mappedresults);
     // write to db
-    await sendMessageToAlbumWriterSQS();
+    await sendMessageToAlbumWriterSQS(mappedresults);
   } catch (e) {
     console.error(e);
     throw e;

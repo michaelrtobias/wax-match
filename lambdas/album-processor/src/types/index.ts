@@ -34,3 +34,4 @@ export {
   SingleAlbumResponse,
   Genres,
 } from "./spotify";
+export { MappedAlbum } from "./common";
